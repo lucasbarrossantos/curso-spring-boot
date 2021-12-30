@@ -4,7 +4,6 @@ import com.mscompra.model.Pedido;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -18,8 +17,8 @@ public class Producer {
     private Queue queue;
 
     @PostMapping
-    public void enviarPedido(@Payload String  payload) {
-        rabbitTemplate.convertAndSend(queue.getName(), payload);
+    public void enviarPedido(Pedido pedido) {
+        rabbitTemplate.convertAndSend(queue.getName(), pedido);
     }
 
 }

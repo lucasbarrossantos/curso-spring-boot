@@ -16,7 +16,7 @@ public class PedidoService {
 
     public Pedido salvar(Pedido pedido) {
         pedido = pedidoRepository.save(pedido);
-        producer.enviarPedido(pedido.toString());
+        producer.enviarPedido(pedido);
         return pedido;
     }
 
