@@ -2,6 +2,7 @@ package com.mscompra.service;
 
 import com.mscompra.model.Pedido;
 import com.mscompra.repository.PedidoRepository;
+import com.mscompra.service.exception.NegocioException;
 import com.mscompra.service.rabbitmq.Producer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,11 @@ public class PedidoService {
         pedido = pedidoRepository.save(pedido);
         producer.enviarPedido(pedido);
         return pedido;
+    }
+
+    public Pedido buscarOuFalharPorId(Long id) {
+        return pedidoRepository.findById(id)
+                .orElseThrow(()-> new NegocioException("O pedido de id: " + id + " nao existe na base de dados!"));
     }
 
 }

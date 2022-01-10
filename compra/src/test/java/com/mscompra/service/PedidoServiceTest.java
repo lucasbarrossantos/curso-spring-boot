@@ -3,6 +3,7 @@ package com.mscompra.service;
 import com.mscompra.DadosMok;
 import com.mscompra.model.Pedido;
 import com.mscompra.repository.PedidoRepository;
+import com.mscompra.service.exception.NegocioException;
 import com.mscompra.service.rabbitmq.Producer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class PedidoServiceTest {
@@ -41,6 +43,18 @@ public class PedidoServiceTest {
 
         assertEquals(pedidoMok.getCep(), pedidoSalvo.getCep());
         assertNotNull(pedidoSalvo.getCep());
+    }
+
+    @DisplayName("Deve falhar na busca de pedido que nao existe")
+    @Test
+    void deveFalharNaBuscaDePedidoNaoExistente() {
+        var id = 1L;
+
+        Throwable exception = assertThrows(NegocioException.class, () -> {
+            Pedido pedidoSalvo = pedidoService.buscarOuFalharPorId(id);
+        });
+
+        assertEquals("O pedido de id: " + id + " nao existe na base de dados!", exception.getMessage());
     }
 
 }
