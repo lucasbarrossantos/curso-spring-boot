@@ -26,4 +26,9 @@ public class PedidoService {
                 .orElseThrow(()-> new NegocioException("O pedido de id: " + id + " nao existe na base de dados!"));
     }
 
+    public void excluir(Long id) {
+        Pedido pedido = buscarOuFalharPorId(id);
+        pedidoRepository.deleteById(pedido.getId());
+    }
+
 }

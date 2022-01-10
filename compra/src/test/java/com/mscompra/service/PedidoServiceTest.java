@@ -74,4 +74,29 @@ public class PedidoServiceTest {
         Mockito.verify(pedidoRepository, Mockito.atLeastOnce()).findById(id);
     }
 
+    @DisplayName("Deve excluir o pedido com sucesso")
+    @Test
+    void deveExcluirPedidoComSucesso() {
+        var pedidoMok = mock.getPedidoSalvo();
+        var id = 1L;
+
+        Mockito.when(pedidoRepository.findById(id)).thenReturn(Optional.of(pedidoMok));
+        Mockito.doNothing().when(pedidoRepository).deleteById(id);
+
+        pedidoService.excluir(id);
+        Mockito.verify(pedidoRepository, Mockito.atLeastOnce()).deleteById(id);
+    }
+
+    @DisplayName("Deve falhar ao excluir o pedido que nao existe")
+    @Test
+    void deveFalharAoEXcluirPedidoNaoExistente() {
+        var id = 1L;
+
+        Mockito.when(pedidoRepository.findById(id)).thenReturn(Optional.empty());
+
+        Throwable exception = assertThrows(NegocioException.class, () -> pedidoService.excluir(id));
+
+        assertEquals("O pedido de id: " + id + " nao existe na base de dados!", exception.getMessage());
+    }
+
 }
