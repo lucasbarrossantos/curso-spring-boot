@@ -3,6 +3,7 @@ package com.mscompra.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mscompra.CompraApplication;
 import com.mscompra.DadosMok;
+import com.mscompra.model.Pedido;
 import com.mscompra.service.PedidoService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,6 +46,7 @@ public class PedidoControllerTest {
     @Test
     void deveCadastrarPedidoComSucesso() throws Exception {
         var pedidoBody = dadosMok.getPedido();
+        var id = 1L;
 
         mockMvc.perform(post(ROTA_PEDIDO)
                 .content(mapper.writeValueAsString(pedidoBody))
@@ -51,5 +55,9 @@ public class PedidoControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
 
+        Pedido pedidoSalvo = pedidoService.buscarOuFalharPorId(id);
+
+        assertEquals(pedidoSalvo.getId(), id);
+        assertNotNull(pedidoSalvo);
     }
 }
