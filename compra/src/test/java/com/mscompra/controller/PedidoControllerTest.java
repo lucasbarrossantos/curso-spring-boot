@@ -5,6 +5,8 @@ import com.mscompra.CompraApplication;
 import com.mscompra.DadosMok;
 import com.mscompra.model.Pedido;
 import com.mscompra.service.PedidoService;
+import com.mscompra.service.exception.EntidadeNaoEncontradaException;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,8 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,5 +72,29 @@ public class PedidoControllerTest {
         mockMvc.perform(get(ROTA_PEDIDO.concat("/" + id)))
                 .andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @DisplayName("GET - Deve falhar ao buscar pedido que nao existe")
+    @Test
+    void deveFalharAoBuscarPedidoQueNaoExiste() throws Exception {
+        var id = 2L;
+
+        mockMvc.perform(get(ROTA_PEDIDO.concat("/" + id)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("DELETE - Deve excluir um pedido com sucesso")
+    @Test
+    void deveExcluirUmPedidoComSucesso() throws Exception {
+        var id = 1L;
+
+        mockMvc.perform(delete(ROTA_PEDIDO.concat("/" + id)))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        Throwable exception = assertThrows(EntidadeNaoEncontradaException.class, () -> pedidoService.excluir(id));
+
+        assertEquals("O pedido de id: " + id + " nao existe na base de dados!", exception.getMessage());
     }
 }
