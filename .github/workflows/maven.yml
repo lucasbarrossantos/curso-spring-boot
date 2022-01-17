@@ -66,6 +66,6 @@ jobs:
           wait_for_environment_recovery: 120
           application_name: app-spring-boot
           environment_name: Appspringboot-env
-          version_label: ${{ github.SHA }}
+          version_label: 1
           region: us-east-1
           deployment_package: app.war
