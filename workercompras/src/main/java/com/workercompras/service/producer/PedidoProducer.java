@@ -1,37 +1,34 @@
 package com.workercompras.service.producer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workercompras.model.Cartao;
 import com.workercompras.model.Pedido;
 import com.workercompras.service.CartaoService;
+import com.workercompras.service.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
-@Slf4j
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 @Service
 public class PedidoProducer {
 
-    private final RabbitTemplate rabbitTemplate;
-    private final Queue queue;
+    Logger log = LogManager.getLogger(PedidoProducer.class);
+
     private final ObjectMapper mapper;
     private final CartaoService cartaoService;
 
-    @SneakyThrows
-    @PostMapping
-    public void enviarPedido(Pedido pedido) {
+    private final KafkaProducerService kafkaProducerService;
+
+    public void sendOrder(Pedido pedido) throws JsonProcessingException {
         pedido.setCartao(Cartao.builder()
                         .numero(cartaoService.gerarCartao())
                         .limiteDisponivel(cartaoService.gerarLimite())
                 .build());
-        rabbitTemplate.convertAndSend(queue.getName(), mapper.writeValueAsString(pedido));
-        log.info("Pedido montado com sucesso em Worker Compras - PedidoProducer: {}", mapper.writeValueAsString(pedido));
+        kafkaProducerService.sendMessage(mapper.writeValueAsString(pedido));
+        log.info("Order mounted successfully - order: {}", mapper.writeValueAsString(pedido));
     }
 
 }

@@ -6,30 +6,29 @@ import com.worker.validador.service.ValidadorService;
 import com.worker.validador.service.exceptions.LimiteIndisponivelException;
 import com.worker.validador.service.exceptions.SaldoInsuficienteException;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Message;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Payload;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Slf4j
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 @Component
 public class Consumer {
+
+    Logger log = LogManager.getLogger(Consumer.class);
 
     private final ObjectMapper mapper;
     private final ValidadorService validadorService;
 
-    @RabbitListener(queues = {"${queue.name}"})
-    public void consumer(@Payload Message message) throws IOException {
-        var pedido = mapper.readValue(message.getBody(), Pedido.class);
-        log.info("Pedido recebido no Validador: {}", pedido);
+    @KafkaListener(topics = {"${broker.kafka.topic}"})
+    public void orderConsumer(String in) throws IOException {
+        var order = mapper.readValue(in, Pedido.class);
+        log.info("order received");
 
         try {
-            validadorService.validarPedido(pedido);
+            validadorService.validarPedido(order);
         } catch (LimiteIndisponivelException | SaldoInsuficienteException exception) {
             exception.printStackTrace();
         }

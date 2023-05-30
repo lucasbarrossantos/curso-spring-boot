@@ -27,7 +27,6 @@ public class Pedido implements Serializable {
     private String cpfCliente;
     private String cep;
     private String email;
-
     private Cartao cartao;
 
 }

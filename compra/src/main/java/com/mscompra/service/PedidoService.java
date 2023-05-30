@@ -2,28 +2,31 @@ package com.mscompra.service;
 
 import com.mscompra.model.Pedido;
 import com.mscompra.repository.PedidoRepository;
+import com.mscompra.service.event.ProducerOrder;
 import com.mscompra.service.exception.EntidadeNaoEncontradaException;
-import com.mscompra.service.rabbitmq.Producer;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Service
 public class PedidoService {
-
+    Logger log = LogManager.getLogger(PedidoService.class);
     private final PedidoRepository pedidoRepository;
-    private final Producer producer;
+    private final ProducerOrder producerOrder;
 
     public Pedido salvar(Pedido pedido) {
         pedido = pedidoRepository.save(pedido);
-        producer.enviarPedido(pedido);
+        log.info("order persisted successfully");
+        producerOrder.sendOrder(pedido);
         return pedido;
     }
 
     public Pedido buscarOuFalharPorId(Long id) {
         return pedidoRepository.findById(id)
-                .orElseThrow(()-> new EntidadeNaoEncontradaException("O pedido de id: " + id + " nao existe na base de dados!"));
+                .orElseThrow(()-> new EntidadeNaoEncontradaException("Order id: " + id + " does not exist in database!"));
     }
 
     public void excluir(Long id) {

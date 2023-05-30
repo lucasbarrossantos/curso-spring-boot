@@ -1,27 +1,60 @@
-version: '3.9'
+version: '3'
 services:
-  backend:
-    container_name: backend
-    restart: always
-    build: .
-    ports:
-      - "8080:8080"
-    links:
-      - rabbitmq
-    networks:
-      host:
+#  backend:
+#    container_name: backend
+#    restart: always
+#    build: .
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - local
 
-  rabbitmq:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.2
     restart: always
-    image: rabbitmq:3.9-management
+    container_name: zookeeper
     environment:
-      RABBITMQ_DEFAULT_USER: "admin"
-      RABBITMQ_DEFAULT_PASS: "admin"
-    ports:
-      - '5672:5672'
-      - '15672:15672'
-    networks:
-      host:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181
 
-networks:
-  host:
+  broker:
+    image: confluentinc/cp-kafka:7.3.2
+    restart: always
+    container_name: broker
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://broker:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_CREATE_TOPICS: COMPRA_EFETUADA, COMPRA_PENDENTE
+
+  zipkin:
+    container_name: zipkin
+    image: ghcr.io/openzipkin/zipkin:${TAG:-latest}
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
+      - STORAGE_TYPE=mem
+    depends_on:
+      - broker
+    ports:
+      - "9411:9411"
+    expose:
+      - "9411"
+
+  grafana:
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"

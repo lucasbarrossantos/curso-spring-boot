@@ -4,16 +4,18 @@ import com.worker.validador.model.Cartao;
 import com.worker.validador.model.Pedido;
 import com.worker.validador.service.exceptions.LimiteIndisponivelException;
 import com.worker.validador.service.exceptions.SaldoInsuficienteException;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ValidadorService {
 
-    @Autowired
-    private EmailService emailService;
+    Logger log = LogManager.getLogger(ValidadorService.class);
+
+    private final EmailService emailService;
 
     public void validarPedido(Pedido pedido) {
         validarLimiteDisponivel(pedido.getCartao());

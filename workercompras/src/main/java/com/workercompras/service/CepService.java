@@ -2,13 +2,15 @@ package com.workercompras.service;
 
 import com.workercompras.model.Endereco;
 import com.workercompras.repository.CepRepository;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
 public class CepService {
+
+    Logger log = LogManager.getLogger(CepService.class);
 
     @Autowired
     private CepRepository cepRepository;

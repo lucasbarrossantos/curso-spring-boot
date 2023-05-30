@@ -7,7 +7,7 @@ import com.mscompra.model.Pedido;
 import com.mscompra.service.PedidoService;
 import com.mscompra.service.exception.EntidadeNaoEncontradaException;
 
-import com.mscompra.service.rabbitmq.Producer;
+import com.mscompra.service.event.ProducerOrder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +45,7 @@ public class PedidoControllerTest {
     private ObjectMapper mapper;
 
     @MockBean
-    private Producer producer;
+    private ProducerOrder producerOrder;
 
     private static final String ROTA_PEDIDO = "/pedido";
 
@@ -57,7 +57,7 @@ public class PedidoControllerTest {
         var pedidoBody = dadosMok.getPedido();
         var id = 1L;
 
-        Mockito.doNothing().when(producer).enviarPedido(Mockito.any(Pedido.class));
+        Mockito.doNothing().when(producerOrder).sendOrder(Mockito.any(Pedido.class));
 
         mockMvc.perform(post(ROTA_PEDIDO)
                 .content(mapper.writeValueAsString(pedidoBody))

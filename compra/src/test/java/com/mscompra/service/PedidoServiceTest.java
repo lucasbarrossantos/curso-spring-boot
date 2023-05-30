@@ -4,7 +4,7 @@ import com.mscompra.DadosMok;
 import com.mscompra.model.Pedido;
 import com.mscompra.repository.PedidoRepository;
 import com.mscompra.service.exception.NegocioException;
-import com.mscompra.service.rabbitmq.Producer;
+import com.mscompra.service.event.ProducerOrder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,9 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PedidoServiceTest {
@@ -29,7 +27,7 @@ public class PedidoServiceTest {
     private PedidoRepository pedidoRepository;
 
     @Mock
-    private Producer producer;
+    private ProducerOrder producerOrder;
 
     private DadosMok mock = new DadosMok();
 
@@ -39,7 +37,7 @@ public class PedidoServiceTest {
         var pedidoMok = mock.getPedido();
 
         Mockito.when(pedidoRepository.save(Mockito.any(Pedido.class))).thenReturn(pedidoMok);
-        Mockito.doNothing().when(producer).enviarPedido(Mockito.any(Pedido.class));
+        Mockito.doNothing().when(producerOrder).sendOrder(Mockito.any(Pedido.class));
 
         var pedidoSalvo = pedidoService.salvar(pedidoMok);
 
