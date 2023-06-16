@@ -5,15 +5,13 @@ import com.worker.validador.model.Pedido;
 import com.worker.validador.service.exceptions.LimiteIndisponivelException;
 import com.worker.validador.service.exceptions.SaldoInsuficienteException;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ValidadorService {
-
-    Logger log = LogManager.getLogger(ValidadorService.class);
 
     private final EmailService emailService;
 

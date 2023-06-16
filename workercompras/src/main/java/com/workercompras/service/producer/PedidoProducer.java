@@ -7,15 +7,13 @@ import com.workercompras.model.Pedido;
 import com.workercompras.service.CartaoService;
 import com.workercompras.service.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class PedidoProducer {
-
-    Logger log = LogManager.getLogger(PedidoProducer.class);
 
     private final ObjectMapper mapper;
     private final CartaoService cartaoService;

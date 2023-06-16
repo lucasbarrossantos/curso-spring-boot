@@ -1,15 +1,13 @@
 package com.worker.validador.service;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class EmailService {
-
-    Logger log = LogManager.getLogger(EmailService.class);
 
     @Autowired
     private JavaMailSender javaMailSender;
