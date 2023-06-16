@@ -3,8 +3,8 @@ package com.mscompra.service;
 import com.mscompra.DadosMok;
 import com.mscompra.model.Pedido;
 import com.mscompra.repository.PedidoRepository;
-import com.mscompra.service.exception.NegocioException;
 import com.mscompra.service.event.ProducerOrder;
+import com.mscompra.service.exception.NegocioException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,11 +50,10 @@ public class PedidoServiceTest {
     void deveFalharNaBuscaDePedidoNaoExistente() {
         var id = 1L;
 
-        Throwable exception = assertThrows(NegocioException.class, () -> {
-            Pedido pedidoSalvo = pedidoService.buscarOuFalharPorId(id);
-        });
+        Throwable exception = assertThrows(NegocioException.class,
+                () -> pedidoService.buscarOuFalharPorId(id));
 
-        assertEquals("O pedido de id: " + id + " nao existe na base de dados!", exception.getMessage());
+        assertEquals("Order id: "+ id +" does not exist in database!", exception.getMessage());
     }
 
     @DisplayName("Deve buscar um pedido com sucesso na base de dados")
@@ -94,7 +93,7 @@ public class PedidoServiceTest {
 
         Throwable exception = assertThrows(NegocioException.class, () -> pedidoService.excluir(id));
 
-        assertEquals("O pedido de id: " + id + " nao existe na base de dados!", exception.getMessage());
+        assertEquals("Order id: "+ id +" does not exist in database!", exception.getMessage());
     }
 
 }

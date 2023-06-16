@@ -5,15 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mscompra.model.Pedido;
 import com.mscompra.service.KafkaProducerService;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ProducerOrder {
-
-    Logger log = LogManager.getLogger(ProducerOrder.class);
 
     private final KafkaProducerService kafkaProducerService;
     private final ObjectMapper mapper;

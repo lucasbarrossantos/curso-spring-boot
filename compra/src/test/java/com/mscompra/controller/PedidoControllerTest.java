@@ -1,39 +1,29 @@
 package com.mscompra.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mscompra.CompraApplication;
+import com.mscompra.ContainersEnvironment;
 import com.mscompra.DadosMok;
+import com.mscompra.IntegrationTest;
 import com.mscompra.model.Pedido;
 import com.mscompra.service.PedidoService;
-import com.mscompra.service.exception.EntidadeNaoEncontradaException;
-
 import com.mscompra.service.event.ProducerOrder;
+import com.mscompra.service.exception.EntidadeNaoEncontradaException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = CompraApplication.class)
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-public class PedidoControllerTest {
+@IntegrationTest
+public class PedidoControllerTest extends ContainersEnvironment {
 
     @Autowired
     private MockMvc mockMvc;
@@ -51,30 +41,32 @@ public class PedidoControllerTest {
 
     private DadosMok dadosMok = new DadosMok();
 
-    @DisplayName("POST - Deve cadastrar um novo pedido com sucesso no banco de dados")
+    @DisplayName("POST - Must save successfully a new Order")
     @Test
     void deveCadastrarPedidoComSucesso() throws Exception {
-        var pedidoBody = dadosMok.getPedido();
+        var payload = dadosMok.getPedido();
         var id = 1L;
 
         Mockito.doNothing().when(producerOrder).sendOrder(Mockito.any(Pedido.class));
 
         mockMvc.perform(post(ROTA_PEDIDO)
-                .content(mapper.writeValueAsString(pedidoBody))
+                .content(mapper.writeValueAsString(payload))
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        Pedido pedidoSalvo = pedidoService.buscarOuFalharPorId(id);
+        Pedido order = pedidoService.buscarOuFalharPorId(id);
 
-        assertEquals(pedidoSalvo.getId(), id);
-        assertNotNull(pedidoSalvo);
+        assertEquals(order.getId(), id);
+        assertNotNull(order);
     }
 
-    @DisplayName("GET - Deve buscar o pedido com sucesso na base de dados")
+    @DisplayName("GET - Must get successfully existent Order")
     @Test
     void deveBuscarPedidoComSucesso() throws Exception {
+        deveCadastrarPedidoComSucesso();
+
         var id = 1L;
 
         mockMvc.perform(get(ROTA_PEDIDO.concat("/" + id)))
@@ -82,7 +74,7 @@ public class PedidoControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("GET - Deve falhar ao buscar pedido que nao existe")
+    @DisplayName("GET - Must fail when trying get a Order that does not exist")
     @Test
     void deveFalharAoBuscarPedidoQueNaoExiste() throws Exception {
         var id = 2L;
@@ -92,7 +84,7 @@ public class PedidoControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @DisplayName("DELETE - Deve excluir um pedido com sucesso")
+    @DisplayName("DELETE - Must fail when trying to delete order that does not exist")
     @Test
     void deveExcluirUmPedidoComSucesso() throws Exception {
         var id = 1L;
@@ -103,6 +95,6 @@ public class PedidoControllerTest {
 
         Throwable exception = assertThrows(EntidadeNaoEncontradaException.class, () -> pedidoService.excluir(id));
 
-        assertEquals("O pedido de id: " + id + " nao existe na base de dados!", exception.getMessage());
+        assertEquals("Order id: " + id + " does not exist in database!", exception.getMessage());
     }
 }

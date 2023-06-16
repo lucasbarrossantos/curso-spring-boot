@@ -1,43 +1,68 @@
 {
-  "@timestamp": {
+  "Timestamp": {
     "$resolver": "timestamp",
     "pattern": {
-      "format": "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-      "timeZone": "UTC"
+      "format": "yyyy-MM-dd HH:mm:ss.SSS",
+      "timeZone": "BET",
+      "locale": "pt_BR"
     }
   },
-  "level": {
+  "SeverityText": {
     "$resolver": "level",
     "field": "name"
   },
-  "message": {
-    "$resolver": "message",
-    "stringified": true
-  },
-  "labels": {
-    "$resolver": "mdc",
-    "flatten": true,
-    "stringified": true
-  },
-  "tags": {
-    "$resolver": "ndc"
-  },
-  "error.type": {
-    "$resolver": "exception",
-    "field": "className"
-  },
-  "error.message": {
-    "$resolver": "exception",
-    "field": "message"
-  },
-  "error.stack_trace": {
-    "$resolver": "exception",
-    "field": "stackTrace",
-    "stackTrace": {
-      "stringified": true
+  "Attributes": {
+    "LineNumber": {
+      "$resolver": "source",
+      "field": "lineNumber"
+    },
+    "Class": {
+      "$resolver": "source",
+      "field": "className"
+    },
+    "ThreadName": {
+      "$resolver": "thread",
+      "field": "name"
+    },
+    "Method": {
+      "$resolver": "source",
+      "field": "methodName"
+    },
+    "LoggerName": {
+      "$resolver": "logger",
+      "field": "name"
+    },
+    "exception.type": {
+      "$resolver": "exception",
+      "field": "className"
+    },
+    "exception.message": {
+      "$resolver": "exception",
+      "field": "message"
+    },
+    "exception.stacktrace": {
+      "$resolver": "exception",
+      "field": "stackTrace",
+      "stackTrace": {
+        "stringified": true
+      }
+    },
+    "ExtraAttributes": {
+      "$resolver": "map",
+      "pattern": "^((?!Resource).)*$",
+      "flatten": true
     }
+  },
+  "Resource": {
+    "$resolver": "map",
+    "key": "Resource"
   },
   "mdc": {
     "$resolver": "mdc"
+  },
+  "Body": {
+    "$resolver": "message",
+    "stringified": true,
+    "includeStackTrace": false
   }
 }

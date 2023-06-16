@@ -2,10 +2,10 @@
 <Configuration>
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
-<!--            <PatternLayout-->
-<!--                    pattern="%style{%d{ISO8601}} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{10}}{bright,yellow}: %msg%n%throwable" />-->
+            <PatternLayout
+                    pattern="%style{%d{ISO8601}} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{10}}{bright,yellow}: %msg%n%throwable" />
 
-            <JsonTemplateLayout eventTemplateUri="classpath:EcsLayout.json"/>
+<!--            <JsonTemplateLayout eventTemplateUri="classpath:EcsLayout.json"/>-->
         </Console>
         <SplunkHttp
                 name="splunkhttp"

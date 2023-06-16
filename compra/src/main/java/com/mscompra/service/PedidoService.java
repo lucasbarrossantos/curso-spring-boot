@@ -5,15 +5,14 @@ import com.mscompra.repository.PedidoRepository;
 import com.mscompra.service.event.ProducerOrder;
 import com.mscompra.service.exception.EntidadeNaoEncontradaException;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Service
 public class PedidoService {
-    Logger log = LogManager.getLogger(PedidoService.class);
     private final PedidoRepository pedidoRepository;
     private final ProducerOrder producerOrder;
 

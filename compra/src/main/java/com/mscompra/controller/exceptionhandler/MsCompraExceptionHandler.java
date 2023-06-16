@@ -6,9 +6,8 @@ import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import com.mscompra.service.exception.EntidadeNaoEncontradaException;
 import com.mscompra.service.exception.NegocioException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -33,11 +32,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @ControllerAdvice
 public class MsCompraExceptionHandler extends ResponseEntityExceptionHandler {
-
-    Logger log = LogManager.getLogger(MsCompraExceptionHandler.class);
 
     public static final String MSG_ERRO_GENERICA_USUARIO_FINAL
             = "Ocorreu um erro interno inesperado no sistema. Tente novamente e se "
